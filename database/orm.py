@@ -51,10 +51,19 @@ def delete_article(id):
     session.commit()
 
 
-def get_article_by_id(id):
+def get_article_by_header(header_original):
     session = Session()
-    ticket = session.get(Article, id)
-    return ticket
+    article = session.query(Article).filter(Article.header_original == header_original).first()
+    article_id = article.id
+    return article_id
+
+
+def set_article_readed(id):
+    session = Session()
+    article = session.get(Article, id)
+    article.new = False
+    session.add(article)
+    session.commit()
 
 
 def get_new_articles():
