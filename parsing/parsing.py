@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from settings.settings import slashdotcom_url, gamespot_url, gamespot_base_url
+from database.orm import get_article_by_header
 
 article_structure = {
     'header': '',
@@ -69,10 +70,14 @@ def gamespot_parcer():
         articles = soup.find_all('div', class_='card-item')
         # articles = soup.find_all('a', class_='card-item__link')
         for article in articles:
-            count += 1
             article_dict = {}
             artilce_content = article.find('a', class_='card-item__link')
-            article_dict['header'] = artilce_content.text.strip()
+            header = artilce_content.text.strip()
+            article_dict['header'] = header
+            article_id = get_article_by_header(header)
+            if article_id:
+                print(f'Статья с заголовком {header} с id {article_id} уже есть в базе. Пропускаем')
+                continue
             article_dict['source_url'] = gamespot_base_url + artilce_content['href']
             text, image_url = get_text(article_dict['source_url'])
             thumb_image_url = article.find('div', class_='card-item__img').find('img')['src']
@@ -81,8 +86,10 @@ def gamespot_parcer():
             article_dict['image_url'] = image_url
             article_dict['image_thumb_url'] = thumb_image_url
             articles_list.append(article_dict)
-            if count >= 5:
-                break
+            count += 1
+            # if count >= 5:
+            #     break
+        print(f'{count} статей добавлено')
         return articles_list
     else:
         print(f'Request error (gamespot_parcer): {response.status_code}')

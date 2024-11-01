@@ -54,8 +54,11 @@ def delete_article(id):
 def get_article_by_header(header_original):
     session = Session()
     article = session.query(Article).filter(Article.header_original == header_original).first()
-    article_id = article.id
-    return article_id
+    if article:
+        article_id = article.id
+        return article_id
+    else:
+        return None
 
 
 def set_article_readed(id):
