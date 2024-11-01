@@ -1,0 +1,68 @@
+import os
+
+from aiogram import Bot, Dispatcher, Router, F
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.filters import CommandStart
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import CallbackQuery, Message, User, BotCommand, KeyboardButton,ReplyKeyboardMarkup
+
+from dotenv import load_dotenv
+
+from database.orm import get_new_articles
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+dp = Dispatcher()
+
+router = Router()
+
+
+async def set_commands_menu(bot: Bot):
+    await bot.delete_my_commands()
+    main_menu_commands = [BotCommand(
+                            command='/start',
+                            description='Запуск бота')
+                        ]
+    await bot.set_my_commands(main_menu_commands)
+    return None
+
+
+# Этот классический хэндлер будет срабатывать на команду /start
+@dp.message(CommandStart())
+async def command_start_process(message: Message):
+    text = 'Bot started'
+    request_button = KeyboardButton(text='Получить статьи')
+    keyboard = ReplyKeyboardMarkup(keyboard=[[request_button]], resize_keyboard=True)
+    await message.answer(text, reply_markup=keyboard, parse_mode='Markdown')
+
+
+@dp.message(F.text == 'Получить статьи')
+async def process_request_articles_answer(message: Message):
+    new_articles = get_new_articles()
+    for article in new_articles:
+        article_header = article.header
+        # article_text = article.text
+        article_text_short = article.text_short
+        article_source_url = article.source_url
+        if article.image_url:
+            article_image_url = article.image_url
+        else:
+            article_image_url = article.image_thumb_url
+        text = f'{article_header}\n\n{article_text_short}\n\n{article_image_url}\n\n{article_source_url}'
+        await message.answer(
+            text=text
+        )
+
+
+def main():
+    dp.startup.register(set_commands_menu)
+    dp.include_router(router)
+    dp.run_polling(bot)
+
+
+if __name__ == '__main__':
+    main()
