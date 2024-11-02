@@ -1,0 +1,15 @@
+[Unit]
+Description=Parcing and posting news from sources v1
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/root/dev/parser/tg-chanel-parcer-bot/venv/bin/python bot.py
+ExecReload=/root/dev/parser/tg-chanel-parcer-bot/venv/bin/python bot.py
+WorkingDirectory=/root/dev/parser/tg-chanel-parcer-bot/
+KillMode=process
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
