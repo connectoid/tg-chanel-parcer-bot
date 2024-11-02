@@ -11,6 +11,8 @@ def main():
         header_original = article['header']
         text = get_translation(article['text'])
         text_short = get_short_version(text)
+        image_urls_list = article['image_urls']
+        image_urls_string = ', '.join(image_urls_list)
         add_article(
             header=header,
             header_original=header_original,
@@ -18,8 +20,7 @@ def main():
             text_short=text_short,
             tags='it, dev, web',
             source_url=article['source_url'],
-            image_url=article['image_url'],
-            image_thumb_url=article['image_thumb_url'],
+            image_urls=image_urls_string,
         )
 
 

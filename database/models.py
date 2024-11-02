@@ -19,8 +19,7 @@ class Article(Base):
     is_favorite = Column(Boolean, default=False)
     new = Column(Boolean, default=True)
     source_url = Column(String, nullable=False)
-    image_url = Column(String, nullable=False)
-    image_thumb_url = Column(String, nullable=False)
+    image_urls = Column(String, nullable=False)
 
     def __repr__(self):
         return self.header

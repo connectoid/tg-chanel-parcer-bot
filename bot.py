@@ -51,14 +51,12 @@ async def process_request_articles_answer(message: Message):
         # article_text = article.text
         article_text_short = article.text_short
         article_source_url = article.source_url
-        if article.image_url:
-            article_image_url = article.image_url
-        else:
-            article_image_url = article.image_thumb_url
+        image_urls_list = article.image_urls.split(', ')
         text = f'{article_header}\n\n{article_text_short}\n\n{message_footer}'
-        service_text = f'{article_image_url}\n\n{article_source_url}'
-        await message.answer(text=text)
-        await message.answer(text=service_text, parse_mode='HTML')
+        await message.answer(text=text, parse_mode='HTML')
+        await message.answer(text=f'Источник статьи: {article_source_url}')
+        for index, image_url in enumerate(image_urls_list):
+            await message.answer(text=f'Изображение {index + 1}: {image_url}')
         article_id = get_article_by_header(article_header_original)
         set_article_readed(article_id)
         sleep(3)

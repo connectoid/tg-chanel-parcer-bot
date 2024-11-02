@@ -55,9 +55,10 @@ def gamespot_parcer():
             article_text = ' '.join(paragraphs)
             try:
                 image_url = text_section.find('figure')['data-img-src']
+                image_urls.append(image_url)
             except Exception as e:
                 image_url = ''
-            return article_text, image_url
+            return article_text, image_urls
         else:
             print(f'Request error: {response.status_code}')
             return None
@@ -70,6 +71,7 @@ def gamespot_parcer():
         articles = soup.find_all('div', class_='card-item')
         # articles = soup.find_all('a', class_='card-item__link')
         for article in articles:
+            image_urls = []
             article_dict = {}
             artilce_content = article.find('a', class_='card-item__link')
             header = artilce_content.text.strip()
@@ -79,16 +81,16 @@ def gamespot_parcer():
                 print(f'Статья с заголовком {header} с id {article_id} уже есть в базе. Пропускаем')
                 continue
             article_dict['source_url'] = gamespot_base_url + artilce_content['href']
-            text, image_url = get_text(article_dict['source_url'])
+            text, image_urls = get_text(article_dict['source_url'])
             thumb_image_url = article.find('div', class_='card-item__img').find('img')['src']
             thumb_image_url = thumb_image_url.replace('screen_petite', 'original')
+            image_urls.append(thumb_image_url)
             article_dict['text'] = text
-            article_dict['image_url'] = image_url
-            article_dict['image_thumb_url'] = thumb_image_url
+            article_dict['image_urls'] = image_urls
             articles_list.append(article_dict)
             count += 1
-            # if count >= 5:
-            #     break
+            if count >= 5:
+                break
         print(f'{count} статей добавлено')
         return articles_list
     else:

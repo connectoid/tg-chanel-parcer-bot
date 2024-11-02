@@ -21,7 +21,7 @@ Session = sessionmaker(bind=engine)
 
 
     
-def add_article(header, header_original, text, text_short, tags, source_url, image_url, image_thumb_url):
+def add_article(header, header_original, text, text_short, tags, source_url, image_urls):
     session = Session()
     article = session.query(Article).filter_by(header_original=header_original).first()
     if article is None:
@@ -32,8 +32,7 @@ def add_article(header, header_original, text, text_short, tags, source_url, ima
             text_short=text_short,
             tags=tags,
             source_url=source_url,
-            image_url=image_url,
-            image_thumb_url=image_thumb_url,
+            image_urls=image_urls,
         )
         session.add(new_article)
         session.commit()
