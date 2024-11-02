@@ -45,6 +45,8 @@ async def command_start_process(message: Message):
 @dp.message(F.text == 'Получить статьи')
 async def process_request_articles_answer(message: Message):
     new_articles = get_new_articles()
+    break_message_big = '🖥' * 56
+    await message.answer(text=break_message_big)
     for article in new_articles:
         article_header = article.header
         article_header_original = article.header_original
