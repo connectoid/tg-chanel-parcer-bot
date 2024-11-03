@@ -65,7 +65,7 @@ def get_answer(prompt_content, role_content):
     access_token = get_accesss_token()
     url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
     payload = json.dumps({
-        "model": "GigaChat-Pro",
+        "model": "GigaChat",
         "messages": [
             {
                 "role": "system",
