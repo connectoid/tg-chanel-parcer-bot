@@ -112,6 +112,12 @@ def get_short_version(text):
     return translation
 
 
+def get_translated_shorter_version(text):
+    role_contnet = f' Сократи следующий текст до {MAX_SHORT_VERSION_LENGTH} слов'
+    translation = get_answer(text, role_contnet)
+    return translation
+
+
 def get_tokens_count(prompt):
     access_token = get_accesss_token()
     url = "https://gigachat.devices.sberbank.ru/api/v1/tokens/count"

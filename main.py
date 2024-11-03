@@ -1,6 +1,6 @@
 from parsing.parsing import get_articles
 from database.orm import add_article
-from gpt.gpt import get_translation, get_short_version
+from gpt.gpt import get_translation, get_short_version, get_translated_shorter_version
 
 
 def main():
@@ -9,8 +9,8 @@ def main():
     for article in articles:
         header = get_translation(article['header'])
         header_original = article['header']
-        text = get_translation(article['text'])
-        text_short = get_short_version(text)
+        text = article['text']
+        text_short = get_translated_shorter_version(text)
         image_urls_list = article['image_urls']
         image_urls_string = ', '.join(image_urls_list)
         add_article(
