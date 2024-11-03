@@ -13,3 +13,5 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+
+# systemctl stop tg-chanel-parser-bot.service
