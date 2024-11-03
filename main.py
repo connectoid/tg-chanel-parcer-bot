@@ -24,6 +24,27 @@ def main():
         )
 
 
+# def main():
+#     articles = get_articles('gamespot')
+#     # articles = articles[:3]
+#     for article in articles:
+#         header = get_translation(article['header'])
+#         header_original = article['header']
+#         text = get_translation(article['text'])
+#         text_short = get_short_version(text)
+#         image_urls_list = article['image_urls']
+#         image_urls_string = ', '.join(image_urls_list)
+#         add_article(
+#             header=header,
+#             header_original=header_original,
+#             text=text,
+#             text_short=text_short,
+#             tags='it, dev, web',
+#             source_url=article['source_url'],
+#             image_urls=image_urls_string,
+#         )
+
+
 if __name__ == '__main__':
     main()
     # articles = get_articles('gamespot')
