@@ -83,7 +83,8 @@ def gamespot_parcer():
             article_dict['source_url'] = gamespot_base_url + artilce_content['href']
             text, image_urls = get_text(article_dict['source_url'])
             thumb_image_url = article.find('div', class_='card-item__img').find('img')['src']
-            thumb_image_url = thumb_image_url.replace('screen_petite', 'original')
+            thumb_image_url = thumb_image_url.replace('screen_petite', 'screen_kubrick')
+            # thumb_image_url = thumb_image_url.replace('screen_petite', 'original')
             image_urls.append(thumb_image_url)
             article_dict['text'] = text
             article_dict['image_urls'] = image_urls
