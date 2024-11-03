@@ -113,7 +113,7 @@ def get_short_version(text):
 
 
 def get_translated_shorter_version(text):
-    role_contnet = f' Сократи следующий текст до {MAX_SHORT_VERSION_LENGTH} слов'
+    role_contnet = f' Сократи следующий текст до {MAX_SHORT_VERSION_LENGTH} слов и переведи на русский'
     translation = get_answer(text, role_contnet)
     return translation
 
