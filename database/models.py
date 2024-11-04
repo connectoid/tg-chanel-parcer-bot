@@ -20,6 +20,7 @@ class Article(Base):
     new = Column(Boolean, default=True)
     source_url = Column(String, nullable=False)
     image_urls = Column(String, nullable=False)
+    total_tokens = Column(Integer, nullable=True)
 
     def __repr__(self):
         return self.header

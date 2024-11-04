@@ -74,7 +74,8 @@ async def process_request_articles_answer(message: Message):
         article_text_short = article.text_short
         article_source_url = article.source_url
         image_urls_list = article.image_urls.split(', ')
-        text = f'{article_header}\n\n{article_text_short}\n\n{message_footer}\n\n{break_line}\n\n{article_source_url}'
+        total_tokens = article.total_tokens
+        text = f'{article_header}\n\n{article_text_short}\n\n{message_footer}\n\n{break_line}\n\ntokens: {total_tokens}/n/n{article_source_url}'
         text = text[:1024]
 
         media_group = MediaGroupBuilder(caption=text)

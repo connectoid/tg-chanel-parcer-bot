@@ -1,16 +1,20 @@
 from parsing.parsing import get_articles
 from database.orm import add_article
-from gpt.gpt import get_translation, get_short_version, get_translated_shorter_version
+from gpt.gpt import get_translation, get_short_version
 
 
 def main():
     articles = get_articles('gamespot')
     # articles = articles[:3]
     for article in articles:
-        header = get_translation(article['header'])
+        total_tokens = 0
+        header, tokens = get_translation(article['header'])
+        total_tokens += tokens
         header_original = article['header']
-        text = article['text']
-        text_short = get_translated_shorter_version(text)
+        text, tokens = get_translation(article['text'])
+        total_tokens += tokens
+        text_short, tokens = get_short_version(text)
+        total_tokens += tokens
         image_urls_list = article['image_urls']
         image_urls_string = ', '.join(image_urls_list)
         add_article(
@@ -21,28 +25,8 @@ def main():
             tags='it, dev, web',
             source_url=article['source_url'],
             image_urls=image_urls_string,
+            total_tokens=total_tokens,
         )
-
-
-# def main():
-#     articles = get_articles('gamespot')
-#     # articles = articles[:3]
-#     for article in articles:
-#         header = get_translation(article['header'])
-#         header_original = article['header']
-#         text = get_translation(article['text'])
-#         text_short = get_short_version(text)
-#         image_urls_list = article['image_urls']
-#         image_urls_string = ', '.join(image_urls_list)
-#         add_article(
-#             header=header,
-#             header_original=header_original,
-#             text=text,
-#             text_short=text_short,
-#             tags='it, dev, web',
-#             source_url=article['source_url'],
-#             image_urls=image_urls_string,
-#         )
 
 
 if __name__ == '__main__':

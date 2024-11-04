@@ -89,33 +89,29 @@ def get_answer(prompt_content, role_content):
     try:
         response = requests.post(url, headers=headers, data=payload, verify=False)
         if response.status_code == 200:
-            return response.json()['choices'][0]['message']['content']
+            content = response.json()['choices'][0]['message']['content']
+            total_tokens = response.json()['usage']['total_tokens']
+            return content, total_tokens
         else:
             print(f'Request error (get_answer): {response.status_code} {response.text}, prompt: {prompt_content}')
-            return None
+            return None, None
     except Exception as e:
         print(f'Exception (get_answer): {e}')
-        return None
+        return None, None
 
 
 def get_translation(text):
     role_contnet = 'Переведи на русский следующий текст'
     # role_contnet = ('Ты профессиональный переводчик с английского на русский язык. Переведи стилистически правильно следующий текст. '
     #                 'Не переводи названия игр, фильмов, мультфильмов, книг и прочих названий в кавычках. Не пиши ничего от себя, только перевод текста.')
-    translation = get_answer(text, role_contnet)
-    return translation
+    translation, total_tokens = get_answer(text, role_contnet)
+    return translation, total_tokens
 
 
 def get_short_version(text):
     role_contnet = f'Сократи следующий текст до {MIN_SHORT_VERSION_LENGTH}-{MAX_SHORT_VERSION_LENGTH} слов'
-    translation = get_answer(text, role_contnet)
-    return translation
-
-
-def get_translated_shorter_version(text):
-    role_contnet = f' Сократи следующий текст до {MAX_SHORT_VERSION_LENGTH} слов и переведи на русский'
-    translation = get_answer(text, role_contnet)
-    return translation
+    short_version, total_tokens = get_answer(text, role_contnet)
+    return short_version, total_tokens
 
 
 def get_tokens_count(prompt):
