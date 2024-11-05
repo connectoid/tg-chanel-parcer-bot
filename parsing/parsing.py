@@ -54,8 +54,9 @@ def gamespot_parcer():
             paragraphs = [p.text for p in paragraphs]
             article_text = ' '.join(paragraphs)
             try:
-                image_url = text_section.find('figure')['data-img-src']
-                image_urls.append(image_url)
+                image_url_string = text_section.find('figure')['data-img-src']
+                image_urls_list = image_url_string.split(',')
+                image_urls += image_urls_list
             except Exception as e:
                 image_url = ''
             return article_text, image_urls

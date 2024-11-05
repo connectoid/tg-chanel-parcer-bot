@@ -12,7 +12,7 @@ def main():
         text = get_short_version(text)
         source_url = article['source_url']
         image_urls_list = article['image_urls']
-        image_urls_string = ', '.join(image_urls_list)
+        image_urls_string = ','.join(image_urls_list)
         add_article(
             header=header,
             text=text,
