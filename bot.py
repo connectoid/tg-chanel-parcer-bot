@@ -157,10 +157,10 @@ if __name__ == '__main__':
     main()
 
 
-https://www.gamespot.com/a/uploads/original/1701/17013431/4390016-001.jpg
-https://www.gamespot.com/a/uploads/original/1701/17013431/4390017-002.jpg
-https://www.gamespot.com/a/uploads/original/1701/17013431/4390018-003.jpg
-https://www.gamespot.com/a/uploads/original/1701/17013431/4390019-004.jpg
-https://www.gamespot.com/a/uploads/original/1701/17013431/4390020-005.jpg
-https://www.gamespot.com/a/uploads/original/1701/17013431/4390021-006.jpg
-https://www.gamespot.com/a/uploads/screen_kubrick/1701/17013431/4390002-warhammerguidehed.jpg
+# https://www.gamespot.com/a/uploads/original/1701/17013431/4390016-001.jpg
+# https://www.gamespot.com/a/uploads/original/1701/17013431/4390017-002.jpg
+# https://www.gamespot.com/a/uploads/original/1701/17013431/4390018-003.jpg
+# https://www.gamespot.com/a/uploads/original/1701/17013431/4390019-004.jpg
+# https://www.gamespot.com/a/uploads/original/1701/17013431/4390020-005.jpg
+# https://www.gamespot.com/a/uploads/original/1701/17013431/4390021-006.jpg
+# https://www.gamespot.com/a/uploads/screen_kubrick/1701/17013431/4390002-warhammerguidehed.jpg
