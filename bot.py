@@ -84,7 +84,7 @@ async def process_request_articles_answer(message: Message):
         article_header = article.header
         article_text = article.text
         article_source_url = article.source_url
-        image_urls_list = article.image_urls.split(', ')
+        image_urls_list = article.image_urls.split(',')
         image = image_urls_list[0]
         print('*'*100)
         print(image_urls_list)
