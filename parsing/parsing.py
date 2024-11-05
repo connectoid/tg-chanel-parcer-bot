@@ -58,6 +58,10 @@ def gamespot_parcer():
                 image_url = text_section.find('figure')['data-img-src']
                 image_url_list = image_url.split(',')
                 image_urls = image_urls + image_url_list
+                print('='*100)
+                print(image_url_list)
+                print(image_urls)
+                print('='*100)
             except Exception as e:
                 print(f'Exception in get_text(url: {e}')
                 image_urls = []
