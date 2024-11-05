@@ -53,6 +53,7 @@ def gamespot_parcer():
                 paragraphs = text_section.find_all('p')
             paragraphs = [p.text for p in paragraphs]
             article_text = ' '.join(paragraphs)
+            image_urls = []
             try:
                 image_url = text_section.find('figure')['data-img-src']
                 image_url_list = image_url.split(',')
@@ -72,7 +73,7 @@ def gamespot_parcer():
         articles = soup.find_all('div', class_='card-item')
         # articles = soup.find_all('a', class_='card-item__link')
         for article in articles:
-            image_urls = []
+            # image_urls = []
             article_dict = {}
             artilce_content = article.find('a', class_='card-item__link')
             header = artilce_content.text.strip()
