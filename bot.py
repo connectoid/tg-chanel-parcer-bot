@@ -94,6 +94,7 @@ async def process_request_articles_answer(message: Message):
         text = text[:1024]
         article_id = get_article_by_header(article_header)
         keyboard = get_inline_keyboard(article_id)
+        print(article_id)
         await bot.send_photo(
             message.chat.id,
             photo=image,
