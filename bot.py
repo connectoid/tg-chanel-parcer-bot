@@ -129,7 +129,7 @@ async def process_translate_button_press(callback: CallbackQuery):
 async def process_media_button_press(callback: CallbackQuery):
     article_id = callback.data
     image_urls = get_images_from_article(article_id)
-    image_urls_list = image_urls.split(', ')
+    image_urls_list = image_urls.split(',')
     print('~'*100)
     print(image_urls_list)
     print('~'*100)
