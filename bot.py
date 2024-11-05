@@ -86,6 +86,10 @@ async def process_request_articles_answer(message: Message):
         article_source_url = article.source_url
         image_urls_list = article.image_urls.split(', ')
         image = image_urls_list[0]
+        print('*'*100)
+        print(image_urls_list)
+        print(image)
+        print('*'*100)
         text = f'{article_header}\n\n{article_text}\n\n{article_source_url}'
         text = text[:1024]
         article_id = get_article_by_header(article_header)
@@ -151,3 +155,12 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+https://www.gamespot.com/a/uploads/original/1701/17013431/4390016-001.jpg
+https://www.gamespot.com/a/uploads/original/1701/17013431/4390017-002.jpg
+https://www.gamespot.com/a/uploads/original/1701/17013431/4390018-003.jpg
+https://www.gamespot.com/a/uploads/original/1701/17013431/4390019-004.jpg
+https://www.gamespot.com/a/uploads/original/1701/17013431/4390020-005.jpg
+https://www.gamespot.com/a/uploads/original/1701/17013431/4390021-006.jpg
+https://www.gamespot.com/a/uploads/screen_kubrick/1701/17013431/4390002-warhammerguidehed.jpg
