@@ -59,7 +59,7 @@ def gamespot_parcer():
                 image_url_list = image_url.split(',')
                 image_urls = image_urls + image_url_list
             except Exception as e:
-                print(f'Exception in get_text(url': '{e}')
+                print(f'Exception in get_text(url: {e}')
                 image_urls = []
             return article_text, image_urls
         else:
