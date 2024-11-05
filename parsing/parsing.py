@@ -89,8 +89,8 @@ def gamespot_parcer():
             article_dict['image_urls'] = image_urls
             articles_list.append(article_dict)
             count += 1
-            if count >= 1:
-                break
+            # if count >= 1:
+            #     break
         print(f'{count} статей добавлено')
         return articles_list
     else:
