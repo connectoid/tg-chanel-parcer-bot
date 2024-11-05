@@ -21,19 +21,15 @@ Session = sessionmaker(bind=engine)
 
 
     
-def add_article(header, header_original, text, text_short, tags, source_url, image_urls, total_tokens):
+def add_article(header, text, source_url, image_urls):
     session = Session()
-    article = session.query(Article).filter_by(header_original=header_original).first()
+    article = session.query(Article).filter_by(header=header).first()
     if article is None:
         new_article = Article(
             header=header,
-            header_original=header_original,
             text=text,
-            text_short=text_short,
-            tags=tags,
             source_url=source_url,
             image_urls=image_urls,
-            total_tokens=total_tokens,
         )
         session.add(new_article)
         session.commit()
@@ -51,9 +47,16 @@ def delete_article(id):
     session.commit()
 
 
-def get_article_by_header(header_original):
+def get_images_from_article(id):
     session = Session()
-    article = session.query(Article).filter(Article.header_original == header_original).first()
+    article = session.query(Article).filter(Article.id == id).first()
+    image_urls = article.image_urls
+    return image_urls
+
+
+def get_article_by_header(header):
+    session = Session()
+    article = session.query(Article).filter(Article.header == header).first()
     if article:
         article_id = article.id
         return article_id

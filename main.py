@@ -7,25 +7,17 @@ def main():
     articles = get_articles('gamespot')
     # articles = articles[:3]
     for article in articles:
-        total_tokens = 0
-        header, tokens = get_translation(article['header'])
-        total_tokens += tokens
-        header_original = article['header']
-        text, tokens = get_translation(article['text'])
-        total_tokens += tokens
-        text_short, tokens = get_short_version(text)
-        total_tokens += tokens
+        header = article['header']
+        text = article['text']
+        text = get_short_version(text)
+        source_url = article['source_url']
         image_urls_list = article['image_urls']
         image_urls_string = ', '.join(image_urls_list)
         add_article(
             header=header,
-            header_original=header_original,
             text=text,
-            text_short=text_short,
-            tags='it, dev, web',
-            source_url=article['source_url'],
+            source_url=source_url,
             image_urls=image_urls_string,
-            total_tokens=total_tokens,
         )
 
 

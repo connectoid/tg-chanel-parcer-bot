@@ -91,7 +91,7 @@ def get_answer(prompt_content, role_content):
         if response.status_code == 200:
             content = response.json()['choices'][0]['message']['content']
             total_tokens = response.json()['usage']['total_tokens']
-            return content, total_tokens
+            return content
         else:
             print(f'Request error (get_answer): {response.status_code} {response.text}, prompt: {prompt_content}')
             return None, None
@@ -102,16 +102,14 @@ def get_answer(prompt_content, role_content):
 
 def get_translation(text):
     role_contnet = 'Переведи на русский следующий текст'
-    # role_contnet = ('Ты профессиональный переводчик с английского на русский язык. Переведи стилистически правильно следующий текст. '
-    #                 'Не переводи названия игр, фильмов, мультфильмов, книг и прочих названий в кавычках. Не пиши ничего от себя, только перевод текста.')
-    translation, total_tokens = get_answer(text, role_contnet)
-    return translation, total_tokens
+    translation = get_answer(text, role_contnet)
+    return translation
 
 
 def get_short_version(text):
     role_contnet = f'Сократи следующий текст до {MIN_SHORT_VERSION_LENGTH}-{MAX_SHORT_VERSION_LENGTH} слов'
-    short_version, total_tokens = get_answer(text, role_contnet)
-    return short_version, total_tokens
+    short_version = get_answer(text, role_contnet)
+    return short_version
 
 
 def get_tokens_count(prompt):

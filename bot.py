@@ -6,15 +6,16 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.utils.media_group import MediaGroupBuilder
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, BaseFilter
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import (CallbackQuery, Message, User, BotCommand, KeyboardButton, ReplyKeyboardMarkup,
                            InlineKeyboardButton, InlineKeyboardMarkup)
 
 from dotenv import load_dotenv
 
-from database.orm import get_new_articles, get_article_by_header, set_article_readed
+from database.orm import get_new_articles, get_article_by_header, set_article_readed, get_images_from_article
 from settings.settings import message_footer
+from gpt.gpt import get_translation
 
 load_dotenv()
 
@@ -25,19 +26,31 @@ dp = Dispatcher()
 
 router = Router()
 
-button_info = InlineKeyboardButton(
-    text='Инфо',
-    callback_data='info_button_pressed'
-)
+class IsDigitCallbackData(BaseFilter):
+    async def __call__(self, callback: CallbackQuery) -> bool:
+        return callback.data.isdigit()
+    
+def get_inline_keyboard(article_id):
 
-button_dislike = InlineKeyboardButton(
-    text='👎',
-    callback_data='dislike_button_pressed'
-)
+    button_translate = InlineKeyboardButton(
+        text='Перевод',
+        callback_data='translate_button_pressed'
+    )
 
-kb_builder = InlineKeyboardBuilder()
-buttons = [button_dislike, button_info]
-kb_builder.row(*buttons, width=2)
+    button_media = InlineKeyboardButton(
+        text='Медиа',
+        callback_data=str(article_id)
+    )
+
+    button_dislike = InlineKeyboardButton(
+        text='👎',
+        callback_data='dislike_button_pressed'
+    )
+
+    kb_builder = InlineKeyboardBuilder()
+    buttons = [button_dislike, button_translate, button_media]
+    kb_builder.row(*buttons, width=3)
+    return kb_builder.as_markup()
 
 
 async def set_commands_menu(bot: Bot):
@@ -64,39 +77,65 @@ async def process_request_articles_answer(message: Message):
     new_articles = get_new_articles()
     break_message_big = '🟨' * 56
     break_line = '-' * 37
-    if new_articles:
-        await message.answer(text=break_message_big)
+    # if new_articles:
+    #     await message.answer(text=break_message_big)
 
     for article in new_articles:
         article_header = article.header
-        article_header_original = article.header_original
-        # article_text = article.text
-        article_text_short = article.text_short
+        article_text = article.text
         article_source_url = article.source_url
         image_urls_list = article.image_urls.split(', ')
-        total_tokens = article.total_tokens
-        text = f'{article_header}\n\n{article_text_short}\n\n{message_footer}\n\n{break_line}\n\ntokens: {total_tokens}/n/n{article_source_url}'
+        image = image_urls_list[0]
+        text = f'{article_header}\n\n{article_text}\n\n{article_source_url}'
         text = text[:1024]
-
-        media_group = MediaGroupBuilder(caption=text)
-        for image_url in image_urls_list:
-            media_group.add_photo(media=image_url)
-            # media_group.add(type="video", media=FSInputFile("media/video.mp4"))
-        await bot.send_media_group(
+        article_id = get_article_by_header(article_header)
+        keyboard = get_inline_keyboard(article_id)
+        await bot.send_photo(
             message.chat.id,
-            media=media_group.build(),
+            photo=image,
+            caption=text,
+            reply_markup=keyboard
         )
 
-        article_id = get_article_by_header(article_header_original)
+        # media_group = MediaGroupBuilder(caption=text)
+        # for image_url in image_urls_list:
+        #     media_group.add_photo(media=image_url)
+        #     # media_group.add(type="video", media=FSInputFile("media/video.mp4"))
+        # await bot.send_media_group(
+        #     message.chat.id,
+        #     media=media_group.build(),
+        # )
+
         set_article_readed(article_id)
         sleep(3)
 
 
-@dp.callback_query(F.data == 'info_button_pressed')
-async def process_like_button_press(callback: CallbackQuery):
+@dp.callback_query(F.data == 'translate_button_pressed')
+async def process_translate_button_press(callback: CallbackQuery):
+    article_id = callback.data.split('_')[-1]
+    keyboard = get_inline_keyboard(article_id)
     caption = callback.message.caption
-    new_caption
-    await callback.message.edit_caption(caption='New Caption') 
+    new_caption = get_translation(caption)
+    await callback.message.edit_caption(caption=new_caption, reply_markup=keyboard) 
+
+
+@dp.callback_query(IsDigitCallbackData())
+# @dp.callback_query(F.text == 'Медиа')
+async def process_media_button_press(callback: CallbackQuery):
+    article_id = callback.data
+    image_urls = get_images_from_article(article_id)
+    image_urls_list = image_urls.split(', ')
+    for image_url in image_urls_list:
+        await bot.send_photo(
+            callback.message.chat.id,
+            photo=image_url,
+            caption=image_url
+        )
+    # print(image_urls)
+    # caption = callback.message.caption
+    # new_caption = get_translation(caption)
+
+    # await callback.message.edit_caption(caption=new_caption, reply_markup=kb_builder.as_markup()) 
 
 
 @dp.callback_query(F.data == 'dislike_button_pressed')
