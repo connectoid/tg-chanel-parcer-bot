@@ -90,7 +90,7 @@ async def process_request_articles_answer(message: Message):
         print(image_urls_list)
         print(image)
         print('*'*100)
-        text = f'{article_header}\n\n{article_text}\n\n{article_source_url}'
+        text = f'{article_header}\n\n{article_text}\n\n{message_footer}\n\n{article_source_url}'
         text = text[:1024]
         article_id = get_article_by_header(article_header)
         keyboard = get_inline_keyboard(article_id)
@@ -137,7 +137,7 @@ async def process_media_button_press(callback: CallbackQuery):
         await bot.send_photo(
             callback.message.chat.id,
             photo=image_url,
-            caption=image_url
+            # caption=image_url
         )
     # print(image_urls)
     # caption = callback.message.caption
