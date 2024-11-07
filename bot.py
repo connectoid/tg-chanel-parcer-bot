@@ -13,7 +13,8 @@ from aiogram.types import (CallbackQuery, Message, User, BotCommand, KeyboardBut
 
 from dotenv import load_dotenv
 
-from database.orm import get_new_articles, get_article_by_header, set_article_readed, get_images_from_article
+from database.orm import (get_new_articles, get_article_by_header, set_article_readed, get_images_from_article,
+                          get_source_url_from_article)
 from settings.settings import message_footer
 from gpt.gpt import get_translation
 
@@ -30,16 +31,24 @@ class IsDigitCallbackData(BaseFilter):
     async def __call__(self, callback: CallbackQuery) -> bool:
         return callback.data.isdigit()
     
-def get_inline_keyboard(article_id):
+def get_inline_keyboard(article_id, source_url):
+
+    domain = source_url.split('.')[1].split('.')[0]
+    id = str(article_id)
+    
+    button_source = InlineKeyboardButton(
+        text=f'Источник {domain}',
+        url=source_url
+    )
 
     button_translate = InlineKeyboardButton(
         text='Перевод',
-        callback_data='translate_button_pressed'
+        callback_data=f'article_{id}'
     )
 
     button_media = InlineKeyboardButton(
         text='Медиа',
-        callback_data=str(article_id)
+        callback_data=id
     )
 
     button_dislike = InlineKeyboardButton(
@@ -48,7 +57,7 @@ def get_inline_keyboard(article_id):
     )
 
     kb_builder = InlineKeyboardBuilder()
-    buttons = [button_dislike, button_translate, button_media]
+    buttons = [button_dislike, button_translate, button_media, button_source]
     kb_builder.row(*buttons, width=3)
     return kb_builder.as_markup()
 
@@ -90,10 +99,10 @@ async def process_request_articles_answer(message: Message):
         print(image_urls_list)
         print(image)
         print('*'*100)
-        text = f'{article_header}\n\n{article_text}\n\n{message_footer}\n\n{article_source_url}'
+        text = f'{article_header}\n\n{article_text}' #\n\n{message_footer}'
         text = text[:1024]
         article_id = get_article_by_header(article_header)
-        keyboard = get_inline_keyboard(article_id)
+        keyboard = get_inline_keyboard(article_id, article_source_url)
         print(article_id)
         await bot.send_photo(
             message.chat.id,
@@ -115,17 +124,22 @@ async def process_request_articles_answer(message: Message):
         sleep(3)
 
 
-@dp.callback_query(F.data == 'translate_button_pressed')
+@dp.callback_query(F.text == 'Перевод')
 async def process_translate_button_press(callback: CallbackQuery):
-    article_id = callback.data.split('_')[-1]
-    keyboard = get_inline_keyboard(article_id)
-    caption = callback.message.caption
-    new_caption = get_translation(caption)
-    await callback.message.edit_caption(caption=new_caption, reply_markup=keyboard) 
+    print('Translate pressed')
+    print(callback.data)
+    # article_id = callback.data
+    # print(article_id)
+    # source_url = get_source_url_from_article(article_id)
+    # keyboard = get_inline_keyboard(article_id, source_url)
+    # caption = callback.message.caption
+    # new_caption = get_translation(caption)
+    # print(caption)
+    # print(new_caption)
+    # await callback.message.edit_caption(caption=new_caption, reply_markup=keyboard) 
 
 
 @dp.callback_query(IsDigitCallbackData())
-# @dp.callback_query(F.text == 'Медиа')
 async def process_media_button_press(callback: CallbackQuery):
     article_id = callback.data
     image_urls = get_images_from_article(article_id)
@@ -139,11 +153,6 @@ async def process_media_button_press(callback: CallbackQuery):
             photo=image_url,
             # caption=image_url
         )
-    # print(image_urls)
-    # caption = callback.message.caption
-    # new_caption = get_translation(caption)
-
-    # await callback.message.edit_caption(caption=new_caption, reply_markup=kb_builder.as_markup()) 
 
 
 @dp.callback_query(F.data == 'dislike_button_pressed')

@@ -3,13 +3,14 @@ from database.orm import add_article
 from gpt.gpt import get_translation, get_short_version
 
 
-def main():
-    articles = get_articles('gamespot')
-    # articles = articles[:3]
+def parse(source, create_short_version=False):
+    articles = get_articles(source)
     for article in articles:
         header = article['header']
-        text = article['text']
-        text = get_short_version(text)
+        if create_short_version:
+            text = get_short_version(text)
+        else:
+            text = article['text']
         source_url = article['source_url']
         image_urls_list = article['image_urls']
         image_urls_string = ','.join(image_urls_list)
@@ -21,12 +22,18 @@ def main():
         )
 
 
+def main():
+    parse('gamespot', create_short_version=True)
+    parse('eurogamer')
+
+
 if __name__ == '__main__':
     main()
-    # articles = get_articles('gamespot')
+
+    # articles = get_articles('eurogamer')
     # for article in articles:
     #     print(article['header'])
-    #     print(article['text'])
-    #     # print(article['text_short'])
-    #     print(article['image_url'])
+    #     print(article['summary'])
+    #     print(article['image_urls'])
     #     print(article['source_url'])
+    #     print('\n')
