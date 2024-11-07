@@ -7,10 +7,9 @@ def parse(source, create_short_version=False):
     articles = get_articles(source)
     for article in articles:
         header = article['header']
+        text = article['text']
         if create_short_version:
             text = get_short_version(text)
-        else:
-            text = article['text']
         source_url = article['source_url']
         image_urls_list = article['image_urls']
         image_urls_string = ','.join(image_urls_list)
