@@ -113,7 +113,10 @@ async def process_request_articles_answer(message: Message):
             )
         except Exception as e:
             text = f'Exception: {e}'
-            await bot.send_message(text=text)
+            await bot.send_message(
+                message.chat.id,
+                text=text
+            )
 
         set_article_readed(article_id)
         sleep(3)
