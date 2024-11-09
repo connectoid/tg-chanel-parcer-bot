@@ -120,7 +120,6 @@ def gamesradar_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
-            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
