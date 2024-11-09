@@ -104,21 +104,16 @@ async def process_request_articles_answer(message: Message):
         article_id = get_article_by_header(article_header)
         keyboard = get_inline_keyboard(article_id, article_source_url)
         print(article_id)
-        await bot.send_photo(
-            message.chat.id,
-            photo=image,
-            caption=text,
-            reply_markup=keyboard
-        )
-
-        # media_group = MediaGroupBuilder(caption=text)
-        # for image_url in image_urls_list:
-        #     media_group.add_photo(media=image_url)
-        #     # media_group.add(type="video", media=FSInputFile("media/video.mp4"))
-        # await bot.send_media_group(
-        #     message.chat.id,
-        #     media=media_group.build(),
-        # )
+        try:
+            await bot.send_photo(
+                message.chat.id,
+                photo=image,
+                caption=text,
+                reply_markup=keyboard
+            )
+        except Exception as e:
+            text = f'Exception: {e}'
+            await bot.send_message(text=text)
 
         set_article_readed(article_id)
         sleep(3)
