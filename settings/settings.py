@@ -6,3 +6,6 @@ gamespot_base_url = 'https://www.gamespot.com'
 
 eurogamer_url = 'https://www.eurogamer.net/latest'
 eurogamer_base_url = 'https://www.eurogamer.net'
+
+pcgamer_url = 'https://www.pcgamer.com/news/'
+pcgamer_base_url = 'https://www.pcgamer.com'

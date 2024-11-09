@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from settings.settings import slashdotcom_url, gamespot_url, gamespot_base_url, eurogamer_url
+from settings.settings import (slashdotcom_url, gamespot_url, gamespot_base_url, eurogamer_url, 
+                               pcgamer_url)
 from database.orm import get_article_by_header
 
 article_structure = {
@@ -21,6 +22,8 @@ def get_articles(site):
             articles = gamespot_parcer()
         case 'eurogamer':
             articles = eurogamer_parser()
+        case 'pcgamer':
+            articles = pcgamer_parser()
     return articles
 
 
@@ -42,8 +45,49 @@ def slashdotcom_parcer():
         return None
 
 
+def pcgamer_parser():
+    print('Start PCGAMER parsing')
+
+    def get_text(url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'lxml')
+            text = soup.find('div', {"id": "article-body"}).text.strip()
+            return text
+        else:
+            print(f'Request error: {response.status_code}')
+            return None
+    response = requests.get(pcgamer_url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'lxml')
+        articles_list = []
+        article_links = soup.find_all('a', class_='article-link')
+        article_links = article_links[3:]
+        print(len(article_links))
+        for article in article_links:
+            article_dict = {}
+            header = article.find('h3', class_='article-name').text.strip()
+            source_url = article['href']
+            text = get_text(source_url)
+            image_url_set = article.find('div', class_='image').find('img')['srcset']
+            image_url = image_url_set.split(', ')[-1].split(' ')[0]
+            image_urls = []
+            image_urls.append(image_url)
+            article_dict['header'] = header
+            article_dict['text'] = text
+            article_dict['image_urls'] = image_urls
+            article_dict['source_url'] = source_url
+            articles_list.append(article_dict)
+            break
+        return articles_list
+    else:
+        print(f'Request error: {response.status_code}')
+        return None
+
+
+
 def eurogamer_parser():
-    print('Start parsing')
+    print('Start EUROGAMER parsing')
     response = requests.get(eurogamer_url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'lxml')
@@ -71,6 +115,7 @@ def eurogamer_parser():
         return None
 
 def gamespot_parcer():
+    print('Start GAMESPOT parsing')
 
     def get_text(url):
         response = requests.get(url)

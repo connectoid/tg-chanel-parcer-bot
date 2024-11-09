@@ -24,15 +24,16 @@ def parse(source, create_short_version=False):
 def main():
     parse('gamespot', create_short_version=True)
     parse('eurogamer')
+    parse('pcgamer', create_short_version=True)
 
 
 if __name__ == '__main__':
     main()
 
-    # articles = get_articles('eurogamer')
+    # articles = get_articles('pcgamer')
     # for article in articles:
     #     print(article['header'])
-    #     print(article['summary'])
+    #     print(article['text'])
     #     print(article['image_urls'])
     #     print(article['source_url'])
-    #     print('\n')
+        # print('\n')
