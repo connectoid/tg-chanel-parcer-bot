@@ -9,3 +9,6 @@ eurogamer_base_url = 'https://www.eurogamer.net'
 
 pcgamer_url = 'https://www.pcgamer.com/news/'
 pcgamer_base_url = 'https://www.pcgamer.com'
+
+gamesradar_url = 'https://www.gamesradar.com/uk/news/'
+gamesradar_base_url = 'https://www.gamesradar.com'

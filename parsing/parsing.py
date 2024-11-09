@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from settings.settings import (slashdotcom_url, gamespot_url, gamespot_base_url, eurogamer_url, 
-                               pcgamer_url)
+                               pcgamer_url, gamesradar_url)
 from database.orm import get_article_by_header
 
 article_structure = {
@@ -24,6 +24,8 @@ def get_articles(site):
             articles = eurogamer_parser()
         case 'pcgamer':
             articles = pcgamer_parser()
+        case 'gamesradar':
+            articles = gamesradar_parser()
     return articles
 
 
@@ -78,6 +80,47 @@ def pcgamer_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
+        return articles_list
+    else:
+        print(f'Request error: {response.status_code}')
+        return None
+
+
+
+def gamesradar_parser():
+    print('Start GAMESRADAR parsing')
+
+    def get_text(url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'lxml')
+            text = soup.find('div', {"id": "article-body"}).text.strip()
+            return text
+        else:
+            print(f'Request error: {response.status_code}')
+            return None
+        
+    response = requests.get(gamesradar_url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'lxml')
+        articles_div = soup.find('div', {"data-analytics-id": "featured-article"})
+        articles_divs = articles_div.find_all('div', class_='listingResult')
+        articles_divs = [article_div for article_div in articles_divs if not article_div.find('div', class_='sponsored-post')]
+        articles_list = []
+        for article in articles_divs:
+            article_dict = {}
+            header = article.find('h3', class_='article-name').text
+            source_url = article.find_all('a')[0]['href']
+            text = get_text(source_url)
+            image_url = article.find('picture').find('img')['src']
+            image_urls = []
+            image_urls.append(image_url)
+            article_dict['header'] = header
+            article_dict['text'] = text
+            article_dict['image_urls'] = image_urls
+            article_dict['source_url'] = source_url
+            articles_list.append(article_dict)
+            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
