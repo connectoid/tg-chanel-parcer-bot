@@ -21,12 +21,13 @@ Session = sessionmaker(bind=engine)
 
 
     
-def add_article(header, text, source_url, image_urls):
+def add_article(header, summary, text, source_url, image_urls):
     session = Session()
     article = session.query(Article).filter_by(header=header).first()
     if article is None:
         new_article = Article(
             header=header,
+            summary=summary,
             text=text,
             source_url=source_url,
             image_urls=image_urls,

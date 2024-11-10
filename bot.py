@@ -91,15 +91,11 @@ async def process_request_articles_answer(message: Message):
 
     for article in new_articles:
         article_header = article.header
-        article_text = article.text
+        article_summary = article.summary
         article_source_url = article.source_url
         image_urls_list = article.image_urls.split(',')
         image = image_urls_list[0]
-        print('*'*100)
-        print(image_urls_list)
-        print(image)
-        print('*'*100)
-        text = f'{article_header}\n\n{article_text}' #\n\n{message_footer}'
+        text = f'{article_header}\n\n{article_summary}' #\n\n{message_footer}'
         text = text[:1024]
         article_id = get_article_by_header(article_header)
         keyboard = get_inline_keyboard(article_id, article_source_url)
@@ -142,11 +138,11 @@ async def process_translate_button_press(callback: CallbackQuery):
 async def process_media_button_press(callback: CallbackQuery):
     article_id = callback.data
     text = get_text_from_article(article_id)
-    await bot.send_message(
-        callback.message.chat.id,
-        text=text,
-        # caption=image_url
-    )
+    if len(text) > 4096:
+        for x in range(0, len(text), 4096):
+            await bot.send_message(callback.message.chat.id, text[x:x+4096])
+    else:
+        await bot.send_message(callback.message.chat.id, text)
 
 # Запрос картинок
 # @dp.callback_query(IsDigitCallbackData())

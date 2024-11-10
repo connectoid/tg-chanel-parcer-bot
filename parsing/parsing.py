@@ -65,7 +65,6 @@ def pcgamer_parser():
         articles_list = []
         article_links = soup.find_all('a', class_='article-link')
         article_links = article_links[3:]
-        print(len(article_links))
         for article in article_links:
             article_dict = {}
             header = article.find('h3', class_='article-name').text.strip()
@@ -80,6 +79,7 @@ def pcgamer_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
+            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
@@ -120,6 +120,7 @@ def gamesradar_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
+            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
@@ -145,7 +146,6 @@ def eurogamer_parser():
         soup = BeautifulSoup(response.text, 'lxml')
         articles_list = []
         article_divs = soup.find_all('div', class_='summary')
-        print(len(article_divs))
         for article in article_divs:
             article_dict = {}
             header = article.find('p', class_='title').find('a').text.strip()
@@ -161,6 +161,7 @@ def eurogamer_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
+            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
@@ -185,10 +186,6 @@ def gamespot_parcer():
                 image_url = text_section.find('figure')['data-img-src']
                 image_url_list = image_url.split(',')
                 image_urls = image_urls + image_url_list
-                print('='*100)
-                print(image_url_list)
-                print(image_urls)
-                print('='*100)
             except Exception as e:
                 print(f'Exception in get_text(url: {e}')
                 image_urls = []
@@ -223,6 +220,7 @@ def gamespot_parcer():
             article_dict['image_urls'] = image_urls
             articles_list.append(article_dict)
             count += 1
+            break
             # if count >= 1:
             #     break
         print(f'{count} статей добавлено')
