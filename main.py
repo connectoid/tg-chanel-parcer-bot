@@ -33,13 +33,13 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
+    main()
 
-    articles = get_articles('eurogamer')
-    for article in articles:
-        print(article['header'])
-        print(article['summary'])
-        print(article['text'])
-        print(article['image_urls'])
-        print(article['source_url'])
+    # articles = get_articles('eurogamer')
+    # for article in articles:
+    #     print(article['header'])
+    #     print(article['summary'])
+    #     print(article['text'])
+    #     print(article['image_urls'])
+    #     print(article['source_url'])
         # print('\n')
