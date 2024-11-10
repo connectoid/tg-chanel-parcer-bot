@@ -9,12 +9,15 @@ def parse(source, create_short_version=False):
         header = article['header']
         text = article['text']
         if create_short_version:
-            text = get_short_version(text)
+            summary = get_short_version(text)
+        else:
+            summary = article['summary']
         source_url = article['source_url']
         image_urls_list = article['image_urls']
         image_urls_string = ','.join(image_urls_list)
         add_article(
             header=header,
+            summary=summary,
             text=text,
             source_url=source_url,
             image_urls=image_urls_string,
@@ -30,12 +33,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
 
-    # articles = get_articles('gamesradar')
-    # for article in articles:
-    #     print(article['header'])
-    #     print(article['text'])
-    #     print(article['image_urls'])
-    #     print(article['source_url'])
-    #     # print('\n')
+    articles = get_articles('eurogamer')
+    for article in articles:
+        print(article['header'])
+        print(article['summary'])
+        print(article['text'])
+        print(article['image_urls'])
+        print(article['source_url'])
+        # print('\n')

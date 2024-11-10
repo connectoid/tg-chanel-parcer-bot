@@ -128,6 +128,17 @@ def gamesradar_parser():
 
 
 def eurogamer_parser():
+
+    def get_text(url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'lxml')
+            text = soup.find('div', class_='article_body_content').text.strip()
+            return text
+        else:
+            print(f'Request error: {response.status_code}')
+            return None
+        
     print('Start EUROGAMER parsing')
     response = requests.get(eurogamer_url)
     if response.status_code == 200:
@@ -137,16 +148,16 @@ def eurogamer_parser():
         print(len(article_divs))
         for article in article_divs:
             article_dict = {}
-            # header = article.find('p', class_='title').text
             header = article.find('p', class_='title').find('a').text.strip()
             summary = article.find('div', class_='excerpt').find('p').text.strip()
             image_urls = []
             thumbnail = article.find('div', class_='thumbnail').find('img')['src'].split('?widt')[0]
             image_urls.append(thumbnail)
             source_url = article.find('p', class_='title').find('a')['href']
+            text = get_text(source_url)
             article_dict['header'] = header
-            # article_dict['summary'] = summary
-            article_dict['text'] = summary
+            article_dict['summary'] = summary
+            article_dict['text'] = text
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)

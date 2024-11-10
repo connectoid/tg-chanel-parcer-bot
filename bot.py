@@ -14,7 +14,7 @@ from aiogram.types import (CallbackQuery, Message, User, BotCommand, KeyboardBut
 from dotenv import load_dotenv
 
 from database.orm import (get_new_articles, get_article_by_header, set_article_readed, get_images_from_article,
-                          get_source_url_from_article)
+                          get_source_url_from_article, get_text_from_article)
 from settings.settings import message_footer
 from gpt.gpt import get_translation
 
@@ -47,7 +47,7 @@ def get_inline_keyboard(article_id, source_url):
     )
 
     button_media = InlineKeyboardButton(
-        text='Медиа',
+        text='Весь текст',
         callback_data=id
     )
 
@@ -137,20 +137,32 @@ async def process_translate_button_press(callback: CallbackQuery):
     # await callback.message.edit_caption(caption=new_caption, reply_markup=keyboard) 
 
 
+# Запрос полного текста
 @dp.callback_query(IsDigitCallbackData())
 async def process_media_button_press(callback: CallbackQuery):
     article_id = callback.data
-    image_urls = get_images_from_article(article_id)
-    image_urls_list = image_urls.split(',')
-    print('~'*100)
-    print(image_urls_list)
-    print('~'*100)
-    for image_url in image_urls_list:
-        await bot.send_photo(
-            callback.message.chat.id,
-            photo=image_url,
-            # caption=image_url
-        )
+    text = get_text_from_article(article_id)
+    await bot.send_message(
+        callback.message.chat.id,
+        text=text,
+        # caption=image_url
+    )
+
+# Запрос картинок
+# @dp.callback_query(IsDigitCallbackData())
+# async def process_media_button_press(callback: CallbackQuery):
+#     article_id = callback.data
+#     image_urls = get_images_from_article(article_id)
+#     image_urls_list = image_urls.split(',')
+#     print('~'*100)
+#     print(image_urls_list)
+#     print('~'*100)
+#     for image_url in image_urls_list:
+#         await bot.send_photo(
+#             callback.message.chat.id,
+#             photo=image_url,
+#             # caption=image_url
+#         )
 
 
 @dp.callback_query(F.data == 'dislike_button_pressed')

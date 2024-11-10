@@ -12,6 +12,7 @@ class Article(Base):
     id = Column(Integer, primary_key=True)
     parsing_date = Column(DateTime, default=datetime.now, nullable=False)
     header = Column(String, nullable=False)
+    summary = Column(String, nullable=False)
     text = Column(String, nullable=False)
     new = Column(Boolean, default=True)
     source_url = Column(String, nullable=False)

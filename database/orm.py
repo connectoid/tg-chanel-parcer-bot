@@ -54,6 +54,13 @@ def get_images_from_article(id):
     return image_urls
 
 
+def get_text_from_article(id):
+    session = Session()
+    article = session.query(Article).filter(Article.id == id).first()
+    image_urls = article.text
+    return image_urls
+
+
 def get_source_url_from_article(id):
     session = Session()
     article = session.query(Article).filter(Article.id == id).first()
