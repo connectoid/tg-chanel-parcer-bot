@@ -79,7 +79,6 @@ def pcgamer_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
-            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
@@ -120,7 +119,6 @@ def gamesradar_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
-            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
@@ -161,7 +159,6 @@ def eurogamer_parser():
             article_dict['image_urls'] = image_urls
             article_dict['source_url'] = source_url
             articles_list.append(article_dict)
-            break
         return articles_list
     else:
         print(f'Request error: {response.status_code}')
@@ -220,7 +217,6 @@ def gamespot_parcer():
             article_dict['image_urls'] = image_urls
             articles_list.append(article_dict)
             count += 1
-            break
             # if count >= 1:
             #     break
         print(f'{count} статей добавлено')
