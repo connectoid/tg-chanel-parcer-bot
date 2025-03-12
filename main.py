@@ -1,6 +1,7 @@
 from parsing.parsing import get_articles
 from database.orm import add_article
-from gpt.gpt import get_translation, get_short_version
+# from gpt.gpt import get_translation, get_short_version
+from gpt.deepseek import get_short_version
 
 
 def parse(source, create_short_version=False):
@@ -22,13 +23,14 @@ def parse(source, create_short_version=False):
             source_url=source_url,
             image_urls=image_urls_string,
         )
+        print(f'SUMMARY: {summary}')
 
 
 def main():
     parse('gamespot', create_short_version=True)
-    parse('eurogamer')
-    parse('pcgamer', create_short_version=True)
-    parse('gamesradar', create_short_version=True)
+    # parse('eurogamer')
+    # parse('pcgamer', create_short_version=True)
+    # parse('gamesradar', create_short_version=True)
 
 
 
