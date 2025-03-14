@@ -40,6 +40,12 @@ def get_short_version(text):
     return short_version
 
 
+def translate(text):
+    prompt = f'Переведи на русский язык следующий текст, не пиши ничего лишнего, только перевод: {text}'
+    short_version = get_answer(prompt)
+    return short_version
+
+
 # short_text = get_short_version('Five video games have been recognised for their outstanding soundtracks and nominated for a 2025 Grammy Award.')
 
 # print(short_text)

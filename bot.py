@@ -14,13 +14,16 @@ from aiogram.types import (CallbackQuery, Message, User, BotCommand, KeyboardBut
 from dotenv import load_dotenv
 
 from database.orm import (get_new_articles, get_article_by_header, set_article_readed, get_images_from_article,
-                          get_source_url_from_article, get_text_from_article)
+                          get_source_url_from_article, get_text_from_article, get_article_by_id)
 from settings.settings import message_footer
 from gpt.gpt import get_translation
 
 load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+chanel_id = '@breakingames'
+
+
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -51,13 +54,18 @@ def get_inline_keyboard(article_id, source_url):
         callback_data=id
     )
 
+    button_like = InlineKeyboardButton(
+        text='👍',
+        callback_data=f'like_article_{id}'
+    )
+
     button_dislike = InlineKeyboardButton(
         text='👎',
         callback_data='dislike_button_pressed'
     )
 
     kb_builder = InlineKeyboardBuilder()
-    buttons = [button_dislike, button_translate, button_media, button_source]
+    buttons = [button_dislike, button_like, button_media, button_source]
     kb_builder.row(*buttons, width=3)
     return kb_builder.as_markup()
 
@@ -71,6 +79,35 @@ async def set_commands_menu(bot: Bot):
     await bot.set_my_commands(main_menu_commands)
     return None
 
+
+async def post_to_chanel(article_id, chat_id):
+    article = get_article_by_id(article_id)
+    article_header = article.header
+    article_summary = article.summary
+    article_source_url = article.source_url
+    image_urls_list = article.image_urls.split(',')
+    image = image_urls_list[0]
+    text = f'📰 {article_header}\n\n{article_summary}\n\n{message_footer}'
+    text = text[:1024]
+    print(f'Posting in chanel article with id: {article_id}')
+    try:
+        await bot.send_photo(
+            chanel_id,
+            photo=image,
+            caption=text
+        )
+        await bot.send_message(
+            chat_id,
+            text=f'Пост {article_id} был успешно отправлен в канал',
+            parse_mode='HTML'
+        )
+    except Exception as e:
+        text = f'Exception: {e}'
+        await bot.send_message(
+            chat_id,
+            text=text,
+            parse_mode='HTML'
+        )
 
 # Этот классический хэндлер будет срабатывать на команду /start
 @dp.message(CommandStart())
@@ -95,23 +132,24 @@ async def process_request_articles_answer(message: Message):
         article_source_url = article.source_url
         image_urls_list = article.image_urls.split(',')
         image = image_urls_list[0]
-        text = f'{article_header}\n\n{article_summary}' #\n\n{message_footer}'
+        text = f'📰 {article_header}\n\n{article_summary}\n\n{message_footer}'
         text = text[:1024]
         article_id = get_article_by_header(article_header)
         keyboard = get_inline_keyboard(article_id, article_source_url)
         print(article_id)
+        print(text)
         try:
             await bot.send_photo(
                 message.chat.id,
                 photo=image,
                 caption=text,
-                reply_markup=keyboard
-            )
+                reply_markup=keyboard            )
         except Exception as e:
             text = f'Exception: {e}'
             await bot.send_message(
                 message.chat.id,
-                text=text
+                text=text,
+                parse_mode='HTML'
             )
 
         set_article_readed(article_id)
@@ -122,15 +160,22 @@ async def process_request_articles_answer(message: Message):
 async def process_translate_button_press(callback: CallbackQuery):
     print('Translate pressed')
     print(callback.data)
-    # article_id = callback.data
-    # print(article_id)
-    # source_url = get_source_url_from_article(article_id)
-    # keyboard = get_inline_keyboard(article_id, source_url)
-    # caption = callback.message.caption
-    # new_caption = get_translation(caption)
-    # print(caption)
-    # print(new_caption)
-    # await callback.message.edit_caption(caption=new_caption, reply_markup=keyboard) 
+
+
+
+@dp.callback_query(F.data == 'dislike_button_pressed')
+async def process_like_button_press(callback: CallbackQuery):
+    print('Dislike pressed')
+    await callback.message.delete() 
+
+
+@dp.callback_query(F.data.startswith('like_article_'))
+async def process_like_button_press(callback: CallbackQuery):
+    print('Like pressed')
+    data = callback.data
+    article_id = int(data.split('like_article_')[-1])
+    chat_id = callback.message.chat.id
+    await post_to_chanel(article_id, chat_id)
 
 
 # Запрос полного текста
@@ -159,11 +204,6 @@ async def process_media_button_press(callback: CallbackQuery):
 #             photo=image_url,
 #             # caption=image_url
 #         )
-
-
-@dp.callback_query(F.data == 'dislike_button_pressed')
-async def process_like_button_press(callback: CallbackQuery):
-    await callback.message.delete() 
 
 
 def main():

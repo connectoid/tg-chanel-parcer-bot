@@ -5,6 +5,7 @@ from settings.settings import (slashdotcom_url, gamespot_url, gamespot_base_url,
                                pcgamer_url, gamesradar_url)
 from database.orm import get_article_by_header
 
+
 article_structure = {
     'header': '',
     'text': '',
@@ -217,8 +218,8 @@ def gamespot_parcer():
             article_dict['image_urls'] = image_urls
             articles_list.append(article_dict)
             count += 1
-            if count >= 3:
-                break
+            # if count >= 3:
+            #     break
         print(f'{count} статей добавлено')
         return articles_list
     else:

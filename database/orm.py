@@ -91,3 +91,9 @@ def get_new_articles():
     session = Session()
     new_articles = session.query(Article).filter(Article.new == True).all()
     return new_articles
+
+
+def get_article_by_id(id):
+    session = Session()
+    article = session.get(Article, id)
+    return article

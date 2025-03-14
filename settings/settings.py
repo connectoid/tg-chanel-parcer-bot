@@ -1,4 +1,4 @@
-message_footer = '<a href=" ">👉Игросфера👈</a>'
+message_footer = '<a href="https://t.me/breakingames">👉Breaking Games👈</a>'
 slashdotcom_url = 'https://slashdot.org/'
 
 gamespot_url = 'https://www.gamespot.com/news/'
